@@ -1,34 +1,18 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import phonebook from "./service/phonebook";
+import axios from "axios";
 
-const Person = ({ id, name, number, onClick }) => {
-  return (
-    <div>
-      {name} {number}
-      <button onClick={onClick} id={id}>
-        delete{" "}
-      </button>
-    </div>
-  );
-};
-
-const Persons = ({ persons, filter }) => {
-  const onClick = (event) => {
-    console.log(event.target.id);
-    window.co;
-    phonebook.deletePerson(event.target.id).then((data) => {});
-  };
+const Persons = ({ persons, filter, onDelete }) => {
   const filterRegex = new RegExp(filter, "i");
   const createPersonList = (person) => {
+    console.log("meow ----");
     return (
-      <Person
-        id={person.id}
-        name={person.name}
-        number={person.number}
-        key={person.id}
-        onClick={onClick}
-      />
+      <div key={person.id}>
+        {person.name} {person.number}
+        <button onClick={() => (onDelete(person.id))}>
+          delete
+        </button>
+      </div>
     );
   };
 
@@ -127,7 +111,16 @@ const App = () => {
     setFilter(event.target.value);
   };
 
-  const onDelete = () => {};
+  const onDelete = (id) => {
+    const deleteTarget = persons.find((person) => person.id == id);
+    const deleteConfirmation = window.confirm(`Delete ${deleteTarget.name}?`);
+    console.log(deleteConfirmation, "delete confirmation----");
+    if (deleteConfirmation) {
+      console.log("inside confirmation ", persons);
+      phonebook.deletePerson(id);
+      setPersons(persons.filter(person => person.id != id));
+    }
+  };
 
   return (
     <div>
