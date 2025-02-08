@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import phonebook from "./service/phonebook";
-import axios from "axios";
 
 const Persons = ({ persons, filter, onDelete }) => {
   const filterRegex = new RegExp(filter, "i");
