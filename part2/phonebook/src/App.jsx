@@ -68,9 +68,22 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const personAlreadyThere = persons.some((person) => {
-      return person.name === newName || person.number === newNumber;
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
+    const personAlreadyThere = persons.find((person) => {
+      return person.name === newName;
     });
+    console.log(personAlreadyThere);
+    if(personAlreadyThere && newNumber != "" && personAlreadyThere.number != newNumber) {
+      phonebook.changeNumber(personAlreadyThere.id, personObject).then(returnedPerson => {
+        setPersons(persons.map(person => (person.name != returnedPerson.name) ? person : returnedPerson));
+      });
+      setNewName("");
+      setNewNumber("");
+      return;
+    }
     if (personAlreadyThere) {
       alert(`${newName} or ${newNumber} is already added to phonebook`);
       return;
@@ -84,10 +97,7 @@ const App = () => {
       alert("number can't be empty");
       return;
     }
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    };
+
 
     phonebook.addPerson(personObject).then((returnedPerson) => {
       console.log("sending post request for ", returnedPerson);
