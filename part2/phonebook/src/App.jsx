@@ -1,18 +1,35 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import phonebook from "./service/phonebook";
 
-const Person = ({ name, number }) => {
+const Person = ({ id, name, number, onClick }) => {
   return (
     <div>
       {name} {number}
+      <button onClick={onClick} id={id}>
+        delete{" "}
+      </button>
     </div>
   );
 };
 
 const Persons = ({ persons, filter }) => {
+  const onClick = (event) => {
+    console.log(event.target.id);
+    window.co;
+    phonebook.deletePerson(event.target.id).then((data) => {});
+  };
   const filterRegex = new RegExp(filter, "i");
   const createPersonList = (person) => {
-    return <Person name={person.name} number={person.number} key={person.id} />;
+    return (
+      <Person
+        id={person.id}
+        name={person.name}
+        number={person.number}
+        key={person.id}
+        onClick={onClick}
+      />
+    );
   };
 
   const filterFunction = (person) => {
@@ -59,9 +76,9 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((resp) => {
-      console.log(resp.data);
-      setPersons(resp.data);
+    phonebook.getAll().then((data) => {
+      console.log(data);
+      setPersons(data);
     });
   }, []);
 
@@ -86,11 +103,14 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+
+    phonebook.addPerson(personObject).then((returnedPerson) => {
+      console.log("sending post request for ", returnedPerson);
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const handleOnNameChange = (event) => {
@@ -107,6 +127,8 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  const onDelete = () => {};
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -120,7 +142,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} onDelete={onDelete} />
     </div>
   );
 };
