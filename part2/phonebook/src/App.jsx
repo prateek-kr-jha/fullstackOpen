@@ -92,6 +92,12 @@ const App = () => {
     if(personAlreadyThere && newNumber != "" && personAlreadyThere.number != newNumber) {
       phonebook.changeNumber(personAlreadyThere.id, personObject).then(returnedPerson => {
         setPersons(persons.map(person => (person.name != returnedPerson.name) ? person : returnedPerson));
+        setNotification(`Changed ${returnedPerson.name}'s number to ${returnedPerson.number}`);
+        setIsActive(true);
+        setTimeout(() => {
+          setNotification(""),
+          setIsActive(false)
+        }, 3000)
       });
       setNewName("");
       setNewNumber("");
