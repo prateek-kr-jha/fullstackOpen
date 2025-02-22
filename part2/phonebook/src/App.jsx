@@ -52,11 +52,23 @@ const Filter = ({ handleOnFilterChange }) => {
   );
 };
 
+const Notification = ({ message, isActive }) => {
+  if(message === null) {
+    return null;
+  }
+
+  return <div className={"notification" + (isActive ? "" : " hidden")}>
+    {message}
+  </div>
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState("");
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     phonebook.getAll().then((data) => {
@@ -103,6 +115,12 @@ const App = () => {
     phonebook.addPerson(personObject).then((returnedPerson) => {
       console.log("sending post request for ", returnedPerson);
       setPersons(persons.concat(returnedPerson));
+      setNotification(`Added ${returnedPerson.name}`);
+      setIsActive(true);
+      setTimeout(() => {
+        setNotification(""),
+        setIsActive(false)
+      }, 3000)
       setNewName("");
       setNewNumber("");
     });
@@ -136,6 +154,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} isActive={isActive} />
       <Filter handleOnFilterChange={handleOnFilterChange} />
       <h3>Add a new</h3>
       <Form
