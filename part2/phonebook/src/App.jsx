@@ -60,8 +60,10 @@ const App = () => {
 
   useEffect(() => {
     phonebook.getAll().then((data) => {
-      console.log(data);
+      console.log("inside get allll", data);
       setPersons(data);
+    }).catch(e => {
+      console.log(e, "inside get all api call")
     });
   }, []);
 
